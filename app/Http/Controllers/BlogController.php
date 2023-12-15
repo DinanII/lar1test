@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Blog;
+use App\Models\Comment;
 
 class BlogController extends Controller
 {
@@ -23,6 +24,7 @@ class BlogController extends Controller
     public function create()
     {
         //
+        return view('blogs.create');
     }
 
     /**
@@ -30,14 +32,31 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'postTitle'=>['required'],
+            'postDescription'=>['required']
+        ]);
+
+        $post = new Blog();
+        $post->title = $request->input('postTitle');
+
+        $post->description = $request->input('postDescription');
+
+        $post->user_id = auth()->user()->id;
+
+        $post->save();
+        return redirect()->route('blogs.index')->with('succes', 'Team updated succesfully');    }
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
+        $blog = Blog::findOrFail($id);
+        $comments = Comment::where('blog_id', $id)->get();
+        return view('blogs.detail')
+            ->with('blog', $blog)
+            ->with('comments', $comments);
         //
     }
 
@@ -46,7 +65,9 @@ class BlogController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $blog = Blog::findOrFail($id);
+        return view('blogs.edit')->with('blog', $blog);
+
     }
 
     /**
@@ -62,6 +83,9 @@ class BlogController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $blog = Blog::findOrFail($id);
+        $blog->delete();
+        return redirect()->route('blogs.index')->with('succes', 'Team updated succesfully');
+
     }
 }
