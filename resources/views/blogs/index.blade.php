@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container d-flex align-items-center justify-content-center">
+   
     <div>
         <a class="btn btn-primary mt-6" href="{{ route('blogs.create') }}">New Post</a>
     </div>

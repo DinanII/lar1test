@@ -45,7 +45,8 @@ class BlogController extends Controller
         $post->user_id = auth()->user()->id;
 
         $post->save();
-        return redirect()->route('blogs.index')->with('succes', 'Team updated succesfully');    }
+        return redirect()->route('blogs.index');    
+    }
 
     /**
      * Display the specified resource.
@@ -75,7 +76,18 @@ class BlogController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $blog = Blog::findOrFail($id);
+
+        $request->validate([
+            'postTitle'=>['required'],
+            'postDescription'=>['required']
+        ]);
+
+        $blog->title = $request->input('postTitle');
+
+        $blog->description = $request->input('postDescription');
+        $blog->save();
+        return redirect()->route('blogs.index');
     }
 
     /**
@@ -85,7 +97,7 @@ class BlogController extends Controller
     {
         $blog = Blog::findOrFail($id);
         $blog->delete();
-        return redirect()->route('blogs.index')->with('succes', 'Team updated succesfully');
+        return redirect()->route('blogs.index');
 
     }
 }

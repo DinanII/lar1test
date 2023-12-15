@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Comment;
 
 class CommentController extends Controller
 {
@@ -17,9 +18,9 @@ class CommentController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create($id)
     {
-        //
+        return view('comments.create')->with('blog', $id);
     }
 
     /**
@@ -27,7 +28,21 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title'=>['required'],
+            'desc'=>['required']
+        ]);
+
+        $comment = new Comment();
+        $comment->title = $request->input('title');
+
+        $comment->description = $request->input('desc');
+
+        $comment->user_id = auth()->user()->id;
+        $comment->blog_id = $request->input('blog_id');
+
+        $comment->save();
+        return redirect()->route('blogs.index');    
     }
 
     /**
